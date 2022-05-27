@@ -9,6 +9,7 @@ The environment variable `GEDET_DATA_DIR` has to be set before the package is lo
 It has to hold the absolute path to the gedet data directory on CEPH.  
 E.g. via: `bash$ export GEDET_DATA_DIR=/remote/ceph/group/gedet/data`
 
+Install it Julia via: `using Pkg; Pkg.add(url="https://github.com/lmh91/GeDetData.jl.git")`
 ## Nomenclatures
 
 ### Logdir
