@@ -34,8 +34,11 @@ using GeDetData
 
 log_dirs = GeDetData.get_log_dirs()
 
-log_dirs_2021_GALATEA = filter(c->c.year == 2021 && occursin("GALATEA", c.name), log_dirs)
 log_dirs_2022 = filter(c->c.year == 2022, log_dirs)
+log_dirs_2021_GALATEA = filter(c->c.year == 2021 && occursin("GALATEA", c.name), log_dirs)
+
+#Alternativ in einer Zeile
+log_dirs_2021_GALATEA = GeDetData.get_log_dirs(year = 2021, name = "GALATEA")
 
 log_dir = log_dirs_2021_GALATEA[20] 
 

@@ -15,23 +15,25 @@ const LOGDIR_DATE_FORMAT = DateFormat("yyyy-mm-dd")
 """
     get_log_dirs()
 
-Returns a table of all log dirs.
+Returns a table of all log dirs. Keywords "year" and "name" are available as filter.
 """
-function get_log_dirs()
-    lab_dir_paths = get_lab_dir_paths()
-    filter!(path -> occursin(LOGDIR_PREFIX_REG, basename(path)), lab_dir_paths)
-    basenames = basename.(lab_dir_paths)
+function get_log_dirs(subdir::AbstractString = "lab"; year = missing, name = missing, case_sensitive::Bool = false)
+    sub_dir_paths = vcat(readdir.(readdir(joinpath(GEDET_DATA_DIR::String, subdir), join = true); join = true)...)
+    filter!(path -> occursin(LOGDIR_PREFIX_REG, basename(path)), sub_dir_paths)
+    
+    basenames = basename.(sub_dir_paths)
     matches = map(bn -> match(LOGDIR_PREFIX_REG, bn), basenames)
     dates = map(m -> Date(m.match[1:10], LOGDIR_DATE_FORMAT), matches)
-    Table(
+    log_dirs = Table(
         name = map(i -> basenames[i][length(matches[i].match)+1:end], eachindex(basenames)), 
         year = map(y -> y.value, Year.(dates)), 
         date = dates, 
         dir_name = basenames, 
-        abs_path = lab_dir_paths
+        abs_path = sub_dir_paths
     )
+    !ismissing(year) ? filter!(y -> y.year == year, log_dirs) : log_dirs
+    !ismissing(name) ? filter!(n -> ( case_sensitive ? occursin(name, n.name) : occursin(lowercase(name), lowercase(n.name)) ), log_dirs) : log_dirs
 end
-
 
 """
     create_log_dir(name::AbstractString; option = "lm")
